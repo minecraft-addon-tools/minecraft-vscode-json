@@ -1,0 +1,4 @@
+git checkout upstream
+git fetch upstream
+git reset --hard upstream/master
+git filter-branch -f --subdirectory-filter extensions/json-language-features/ --prune-empty --state-branch refs/heads/filter-branch-state
