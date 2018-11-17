@@ -1,9 +1,9 @@
 {
-	"extends": "../../shared.tsconfig.json",
+	"extends": "../shared.tsconfig.json",
 	"compilerOptions": {
-		"outDir": "./out",
-		"sourceMap": true,
-		"sourceRoot": "../src"
+		"composite": true,
+		"rootDir": "./src",
+		"outDir": "./out"
 	},
 	"include": [
 		"src/**/*"

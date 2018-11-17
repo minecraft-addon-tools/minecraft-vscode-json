@@ -6,7 +6,7 @@
   "publisher": "vscode",
   "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
   "engines": {
-    "vscode": "0.10.x"
+    "vscode": "^1.29.0"
   },
   "icon": "icons/json.png",
   "activationEvents": [
@@ -15,10 +15,11 @@
   ],
   "main": "./client/out/jsonMain",
   "scripts": {
-    "compile": "gulp compile-extension:json-language-features-client compile-extension:json-language-features-server",
-    "watch": "gulp watch-extension:json-language-features-client watch-extension:json-language-features-server",
-    "postinstall": "cd server && yarn install",
-    "install-client-next": "yarn add vscode-languageclient@next"
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -b",
+    "watch": "tsc -b --watch",
+    "clean": "tsc -b --clean",
+    "postinstall": "vscode-install && cd server && npm install"
   },
   "categories": [
     "Programming Languages"
@@ -105,6 +106,8 @@
     "vscode-nls": "^4.0.0"
   },
   "devDependencies": {
-    "@types/node": "^8.10.25"
+    "@types/node": "^8.10.25",
+    "typescript": "^3.1.6",
+    "vscode": "^1.1.21"
   }
 }
