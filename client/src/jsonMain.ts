@@ -10,7 +10,6 @@ const localize = nls.loadMessageBundle();
 
 import { workspace, window, languages, commands, ExtensionContext, extensions, Uri, LanguageConfiguration, Diagnostic, StatusBarAlignment, TextEditor } from 'vscode';
 import { LanguageClient, LanguageClientOptions, RequestType, ServerOptions, TransportKind, NotificationType, DidChangeConfigurationNotification, HandleDiagnosticsSignature } from 'vscode-languageclient';
-import TelemetryReporter from 'vscode-extension-telemetry';
 
 import { hash } from './utils/hash';
 
@@ -34,12 +33,6 @@ namespace SchemaAssociationNotification {
 	export const type: NotificationType<ISchemaAssociations, any> = new NotificationType('json/schemaAssociations');
 }
 
-interface IPackageInfo {
-	name: string;
-	version: string;
-	aiKey: string;
-}
-
 interface Settings {
 	json?: {
 		schemas?: JSONSchemaSettings[];
@@ -57,14 +50,9 @@ interface JSONSchemaSettings {
 	schema?: any;
 }
 
-let telemetryReporter: TelemetryReporter | undefined;
-
 export function activate(context: ExtensionContext) {
 
 	let toDispose = context.subscriptions;
-
-	let packageInfo = getPackageInfo(context);
-	telemetryReporter = packageInfo && new TelemetryReporter(packageInfo.name, packageInfo.version, packageInfo.aiKey);
 
 	let serverMain = readJSONFile(context.asAbsolutePath('./server/package.json')).main;
 	let serverModule = context.asAbsolutePath(path.join('server', serverMain));
@@ -129,12 +117,6 @@ export function activate(context: ExtensionContext) {
 	let disposable = client.start();
 	toDispose.push(disposable);
 	client.onReady().then(() => {
-		disposable = client.onTelemetry(e => {
-			if (telemetryReporter) {
-				telemetryReporter.sendTelemetryEvent(e.key, e.data);
-			}
-		});
-
 		// handle content request
 		client.onRequest(VSCodeContentRequest.type, (uriPath: string) => {
 			let uri = Uri.parse(uriPath);
@@ -207,7 +189,7 @@ export function activate(context: ExtensionContext) {
 }
 
 export function deactivate(): Promise<any> {
-	return telemetryReporter ? telemetryReporter.dispose() : Promise.resolve(null);
+	return Promise.resolve(null);
 }
 
 function getSchemaAssociation(_context: ExtensionContext): ISchemaAssociations {
@@ -327,18 +309,6 @@ function getSchemaId(schema: JSONSchemaSettings, rootPath?: string) {
 		url = Uri.file(path.normalize(path.join(rootPath, url))).toString();
 	}
 	return url;
-}
-
-function getPackageInfo(context: ExtensionContext): IPackageInfo | undefined {
-	let extensionPackage = readJSONFile(context.asAbsolutePath('./package.json'));
-	if (extensionPackage) {
-		return {
-			name: extensionPackage.name,
-			version: extensionPackage.version,
-			aiKey: extensionPackage.aiKey
-		};
-	}
-	return void 0;
 }
 
 function readJSONFile(location: string) {
