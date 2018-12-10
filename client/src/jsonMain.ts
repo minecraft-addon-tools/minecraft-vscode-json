@@ -67,7 +67,7 @@ export function activate(context: ExtensionContext) {
 		debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
 	};
 
-	let documentSelector = ['json', 'jsonc'];
+	let documentSelector = ['mcjson'];
 
 	let schemaResolutionErrorStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 0);
 	schemaResolutionErrorStatusBarItem.command = '_json.retryResolveSchema';
@@ -111,7 +111,7 @@ export function activate(context: ExtensionContext) {
 	};
 
 	// Create the language client and start the client.
-	let client = new LanguageClient('json', localize('jsonserver.name', 'JSON Language Server'), serverOptions, clientOptions);
+	let client = new LanguageClient('mcjson', localize('jsonserver.name', 'Minecraft JSON Language Server'), serverOptions, clientOptions);
 	client.registerProposedFeatures();
 
 	let disposable = client.start();
@@ -184,8 +184,7 @@ export function activate(context: ExtensionContext) {
 			decreaseIndentPattern: /^\s*[}\]],?\s*$/
 		}
 	};
-	languages.setLanguageConfiguration('json', languageConfiguration);
-	languages.setLanguageConfiguration('jsonc', languageConfiguration);
+	languages.setLanguageConfiguration('mcjson', languageConfiguration);
 }
 
 export function deactivate(): Promise<any> {

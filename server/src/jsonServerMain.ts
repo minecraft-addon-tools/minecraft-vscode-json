@@ -15,7 +15,7 @@ import URI from 'vscode-uri';
 import * as URL from 'url';
 import { startsWith } from './utils/strings';
 import { formatError, runSafe, runSafeAsync } from './utils/runner';
-import { JSONDocument, JSONSchema, getLanguageService, DocumentLanguageSettings, SchemaConfiguration } from 'vscode-json-languageservice';
+import { JSONDocument, JSONSchema, getLanguageService, DocumentLanguageSettings, SchemaConfiguration } from 'vscode-json-languageservice-minecraft';
 import { getLanguageModelCache } from './languageModelCache';
 
 interface ISchemaAssociations {
@@ -191,7 +191,7 @@ connection.onDidChangeConfiguration((change) => {
 		const enableFormatter = settings && settings.json && settings.json.format && settings.json.format.enable;
 		if (enableFormatter) {
 			if (!formatterRegistration) {
-				formatterRegistration = connection.client.register(DocumentRangeFormattingRequest.type, { documentSelector: [{ language: 'json' }, { language: 'jsonc' }] });
+				formatterRegistration = connection.client.register(DocumentRangeFormattingRequest.type, { documentSelector: [{ language: 'mcjson' }] });
 			}
 		} else if (formatterRegistration) {
 			formatterRegistration.then(r => r.dispose());
@@ -304,7 +304,7 @@ function validateTextDocument(textDocument: TextDocument, callback?: (diagnostic
 	const jsonDocument = getJSONDocument(textDocument);
 	const version = textDocument.version;
 
-	const documentSettings: DocumentLanguageSettings = textDocument.languageId === 'jsonc' ? { comments: 'ignore', trailingCommas: 'ignore' } : { comments: 'error', trailingCommas: 'error' };
+	const documentSettings: DocumentLanguageSettings = { comments: 'ignore', trailingCommas: 'error' };
 	languageService.doValidation(textDocument, jsonDocument, documentSettings).then(diagnostics => {
 		setTimeout(() => {
 			const currDocument = documents.get(textDocument.uri);
