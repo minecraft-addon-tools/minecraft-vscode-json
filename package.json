@@ -4,6 +4,10 @@
   "description": "%description%",
   "version": "1.0.0",
   "publisher": "vscode",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/minecraft-addon-tools/minecraft-vscode-json.git"
+  },
   "engines": {
     "vscode": "^1.29.0"
   },
